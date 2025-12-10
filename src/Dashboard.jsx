@@ -43,16 +43,21 @@ export default function Dashboard({ user, onLogout }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const addSession = async () => {
-    if (!newSession.subject || !newSession.duration) return;
+    const addSession = async () => {
+      if (!newSession.subject || !newSession.duration) return;
 
-    try {
-      const response = await axios.post(API_URL, {
-        ...newSession,
-        duration: parseFloat(newSession.duration)
-      }, {
-        headers: getAuthHeader()
-      });
+      try {
+        // Ajustar a data para evitar problema de fuso horário
+        const localDate = new Date(newSession.date + 'T12:00:00');
+        const adjustedDate = localDate.toISOString().split('T')[0];
+
+        const response = await axios.post(API_URL, {
+          ...newSession,
+          duration: parseFloat(newSession.duration),
+          date: adjustedDate
+        }, {
+          headers: getAuthHeader()
+        });
 
       setSessions([response.data, ...sessions]);
       setNewSession({ 
@@ -376,7 +381,7 @@ export default function Dashboard({ user, onLogout }) {
                             </div>
                             <p className="text-gray-400 text-sm flex items-center gap-2">
                               <Calendar size={14} />
-                              {new Date(session.date).toLocaleDateString('pt-BR', { 
+                              {new Date(session.date + 'T12:00:00').toLocaleDateString('pt-BR', { 
                                 weekday: 'long',
                                 day: 'numeric',
                                 month: 'long'
