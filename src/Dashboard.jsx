@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, TrendingUp, BookOpen, BarChart3, Plus, X, LogOut, Award, Target, Zap, Star, ChevronRight, Fire } from 'lucide-react';
+import { Calendar, Clock, TrendingUp, BookOpen, BarChart3, Plus, X, LogOut, Award, Target, Zap, Star, ChevronRight, Flame } from 'lucide-react';
 import axios from 'axios';
 
 const API_URL = '/api/sessions';
@@ -294,7 +294,7 @@ export default function Dashboard({ user, onLogout }) {
             <p className="text-gray-400 text-sm font-semibold mb-1">Meta Diária</p>
             <div className="flex items-center gap-2">
               <p className="text-4xl font-black text-white">{stats.totalHours >= 4 ? '100' : Math.round((stats.totalHours / 4) * 100)}%</p>
-              {stats.totalHours >= 4 && <Fire className="text-orange-400 animate-bounce" size={24} />}
+              {stats.totalHours >= 4 && <Flame className="text-orange-400 animate-bounce" size={24} />}
             </div>
           </div>
         </div>
