@@ -8,8 +8,5 @@
       "source": "/(.*)",
       "destination": "/index.html"
     }
-  ],
-  "env": {
-    "JWT_SECRET": "@jwt-secret-change-this-in-production-123456789"
-  }
+  ]
 }
