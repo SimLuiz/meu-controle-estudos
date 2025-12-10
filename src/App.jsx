@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Login from './Login';
 import Dashboard from './Dashboard';
 import axios from 'axios';
+import './index.css';
 
 export default function App() {
   const [user, setUser] = useState(null);
