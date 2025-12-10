@@ -43,21 +43,24 @@ export default function Dashboard({ user, onLogout }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-    const addSession = async () => {
-      if (!newSession.subject || !newSession.duration) return;
+      const addSession = async () => {
+        if (!newSession.subject || !newSession.duration) return;
 
-      try {
-        // Ajustar a data para evitar problema de fuso horário
-        const localDate = new Date(newSession.date + 'T12:00:00');
-        const adjustedDate = localDate.toISOString().split('T')[0];
+        try {
+          const adjustedDate = newSession.date; // sem mexer na data
 
-        const response = await axios.post(API_URL, {
-          ...newSession,
-          duration: parseFloat(newSession.duration),
-          date: adjustedDate
-        }, {
-          headers: getAuthHeader()
-        });
+          const response = await axios.post(
+            API_URL,
+            {
+              ...newSession,
+              duration: parseFloat(newSession.duration),
+              date: adjustedDate
+            },
+            {
+              headers: getAuthHeader()
+            }
+          );
+
 
       setSessions([response.data, ...sessions]);
       setNewSession({ 
@@ -381,11 +384,15 @@ export default function Dashboard({ user, onLogout }) {
                             </div>
                             <p className="text-gray-400 text-sm flex items-center gap-2">
                               <Calendar size={14} />
-                              {new Date(session.date + 'T12:00:00').toLocaleDateString('pt-BR', { 
-                              weekday: 'long',
-                              day: 'numeric',
-                              month: 'long'
-                            })}
+                              {(() => {
+                              const [year, month, day] = session.date.split("-");
+                              return new Date(year, month - 1, day).toLocaleDateString("pt-BR", {
+                                weekday: "long",
+                                day: "numeric",
+                                month: "long"
+                              });
+                            })()}
+
                             </p>
                             {session.notes && (
                               <p className="text-gray-300 text-sm mt-2 bg-white/5 rounded-lg p-2 italic">{session.notes}</p>
