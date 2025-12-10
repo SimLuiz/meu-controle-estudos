@@ -384,15 +384,11 @@ export default function Dashboard({ user, onLogout }) {
                             </div>
                             <p className="text-gray-400 text-sm flex items-center gap-2">
                               <Calendar size={14} />
-                              {(() => {
-                              const [year, month, day] = session.date.split("-");
-                              return new Date(year, month - 1, day).toLocaleDateString("pt-BR", {
+                              {new Date(session.date).toLocaleDateString("pt-BR", {
                                 weekday: "long",
                                 day: "numeric",
                                 month: "long"
-                              });
-                            })()}
-
+                              })}
                             </p>
                             {session.notes && (
                               <p className="text-gray-300 text-sm mt-2 bg-white/5 rounded-lg p-2 italic">{session.notes}</p>
