@@ -47,20 +47,17 @@ export default function Dashboard({ user, onLogout }) {
         if (!newSession.subject || !newSession.duration) return;
 
         try {
-          // Garante padronização sem mudar o dia
-          const adjustedDate = new Date(newSession.date + "T00:00:00")
-            .toISOString()
-            .split("T")[0];
+          const adjustedDate = newSession.date; // sem mexer na data
 
           const response = await axios.post(
             API_URL,
             {
               ...newSession,
               duration: parseFloat(newSession.duration),
-              date: adjustedDate,
+              date: adjustedDate
             },
             {
-              headers: getAuthHeader(),
+              headers: getAuthHeader()
             }
           );
 
@@ -387,14 +384,11 @@ export default function Dashboard({ user, onLogout }) {
                             </div>
                             <p className="text-gray-400 text-sm flex items-center gap-2">
                               <Calendar size={14} />
-                              {(() => {
-                                const [year, month, day] = session.date.split("-");
-                                return new Date(year, month - 1, day).toLocaleDateString("pt-BR", {
-                                  weekday: "long",
-                                  day: "numeric",
-                                  month: "long",
-                                });
-                              })()}
+                              {new Date(session.date).toLocaleDateString("pt-BR", {
+                                weekday: "long",
+                                day: "numeric",
+                                month: "long"
+                              })}
                             </p>
                             {session.notes && (
                               <p className="text-gray-300 text-sm mt-2 bg-white/5 rounded-lg p-2 italic">{session.notes}</p>
