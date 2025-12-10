@@ -47,17 +47,20 @@ export default function Dashboard({ user, onLogout }) {
         if (!newSession.subject || !newSession.duration) return;
 
         try {
-          const adjustedDate = newSession.date; // sem mexer na data
+          // Garante padronização sem mudar o dia
+          const adjustedDate = new Date(newSession.date + "T00:00:00")
+            .toISOString()
+            .split("T")[0];
 
           const response = await axios.post(
             API_URL,
             {
               ...newSession,
               duration: parseFloat(newSession.duration),
-              date: adjustedDate
+              date: adjustedDate,
             },
             {
-              headers: getAuthHeader()
+              headers: getAuthHeader(),
             }
           );
 
