@@ -50,11 +50,7 @@ export default function Dashboard({ user, onLogout }) {
         // Criar data no fuso local sem conversão UTC
         const [year, month, day] = newSession.date.split('-');
         const localDate = `${year}-${month}-${day}`;
-
-        console.log('Data selecionada:', newSession.date);
-        console.log('Data processada:', localDate);
-        console.log('Data de hoje:', new Date().toISOString().split('T')[0]);        
-
+   
         const response = await axios.post(API_URL, {
           subject: newSession.subject,
           duration: parseFloat(newSession.duration),
@@ -64,7 +60,6 @@ export default function Dashboard({ user, onLogout }) {
           headers: getAuthHeader()
         });
 
-        console.log('Data retornada do servidor:', response.data.date);
 
         setSessions([response.data, ...sessions]);
         setNewSession({ 
@@ -92,12 +87,14 @@ export default function Dashboard({ user, onLogout }) {
     }
   };
 
-  const getFilteredSessions = () => {
-    const now = new Date();
-    const today = now.toISOString().split('T')[0];
-    
-    return sessions.filter(s => {
-      const sessionDate = new Date(s.date + 'T12:00:00');
+    const getFilteredSessions = () => {
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+      
+      return sessions.filter(s => {
+        // Extrair só a data (YYYY-MM-DD) do campo date
+        const dateOnly = s.date.split('T')[0];
+        const sessionDate = new Date(dateOnly + 'T12:00:00');
       
       if (viewMode === 'daily') {
         return s.date === today;
