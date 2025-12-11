@@ -12,7 +12,7 @@ export default function Dashboard({ user, onLogout }) {
   const [newSession, setNewSession] = useState({
     subject: '',
     duration: '',
-    date: new Date().toISOString().split('T')[0],
+    date: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().split('T')[0],
     notes: ''
   });
 
@@ -66,7 +66,7 @@ export default function Dashboard({ user, onLogout }) {
       setNewSession({ 
         subject: '', 
         duration: '', 
-        date: new Date().toISOString().split('T')[0], 
+        date: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().split('T')[0], 
         notes: '' 
       });
       setShowModal(false);

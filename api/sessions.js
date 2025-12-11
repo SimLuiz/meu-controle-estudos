@@ -65,7 +65,7 @@ export default async function handler(req, res) {
 
       const { rows } = await sql`
         INSERT INTO study_sessions (user_id, subject, duration, date, notes)
-        VALUES (${userId}, ${subject}, ${duration}, ${date}, ${notes || ''})
+        VALUES (${userId}, ${subject}, ${duration}, ${date}::date, ${notes || ''})
         RETURNING *
       `;
 
