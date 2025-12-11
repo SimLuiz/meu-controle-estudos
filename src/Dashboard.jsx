@@ -89,26 +89,30 @@ export default function Dashboard({ user, onLogout }) {
 
     const getFilteredSessions = () => {
       const now = new Date();
-      const today = now.toISOString().split('T')[0];
+      // Pegar data local em YYYY-MM-DD
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const today = `${year}-${month}-${day}`;
       
       return sessions.filter(s => {
         // Extrair só a data (YYYY-MM-DD) do campo date
         const dateOnly = s.date.split('T')[0];
         const sessionDate = new Date(dateOnly + 'T12:00:00');
-      
-      if (viewMode === 'daily') {
-        return s.date === today;
-      } else if (viewMode === 'weekly') {
-        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        return sessionDate >= weekAgo;
-      } else if (viewMode === 'monthly') {
-        return sessionDate.getMonth() === now.getMonth() && 
-               sessionDate.getFullYear() === now.getFullYear();
-      } else {
-        return sessionDate.getFullYear() === now.getFullYear();
-      }
-    });
-  };
+        
+        if (viewMode === 'daily') {
+          return dateOnly === today;
+        } else if (viewMode === 'weekly') {
+          const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          return sessionDate >= weekAgo;
+        } else if (viewMode === 'monthly') {
+          return sessionDate.getMonth() === now.getMonth() && 
+                sessionDate.getFullYear() === now.getFullYear();
+        } else {
+          return sessionDate.getFullYear() === now.getFullYear();
+        }
+      });
+    };
 
   const calculateStats = () => {
     const filtered = getFilteredSessions();
