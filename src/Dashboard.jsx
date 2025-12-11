@@ -51,6 +51,10 @@ export default function Dashboard({ user, onLogout }) {
         const [year, month, day] = newSession.date.split('-');
         const localDate = `${year}-${month}-${day}`;
 
+        console.log('Data selecionada:', newSession.date);
+        console.log('Data processada:', localDate);
+        console.log('Data de hoje:', new Date().toISOString().split('T')[0]);        
+
         const response = await axios.post(API_URL, {
           subject: newSession.subject,
           duration: parseFloat(newSession.duration),
@@ -59,6 +63,8 @@ export default function Dashboard({ user, onLogout }) {
         }, {
           headers: getAuthHeader()
         });
+
+        console.log('Data retornada do servidor:', response.data.date);
 
         setSessions([response.data, ...sessions]);
         setNewSession({ 
