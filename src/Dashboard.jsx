@@ -97,7 +97,7 @@ export default function Dashboard({ user, onLogout }) {
     const today = now.toISOString().split('T')[0];
     
     return sessions.filter(s => {
-      const sessionDate = new Date(s.date);
+      const sessionDate = new Date(s.date + 'T12:00:00');
       
       if (viewMode === 'daily') {
         return s.date === today;
@@ -388,11 +388,14 @@ export default function Dashboard({ user, onLogout }) {
                             </div>
                             <p className="text-gray-400 text-sm flex items-center gap-2">
                               <Calendar size={14} />
-                              {new Date(session.date).toLocaleDateString("pt-BR", {
-                                weekday: "long",
-                                day: "numeric",
-                                month: "long"
-                              })}
+                            {(() => {
+                              const date = new Date(session.date + 'T12:00:00');
+                              return date.toLocaleDateString('pt-BR', { 
+                                weekday: 'long',
+                                day: 'numeric',
+                                month: 'long'
+                              });
+                            })()}
                             </p>
                             {session.notes && (
                               <p className="text-gray-300 text-sm mt-2 bg-white/5 rounded-lg p-2 italic">{session.notes}</p>
