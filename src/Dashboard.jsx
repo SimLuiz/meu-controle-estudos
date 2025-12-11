@@ -68,21 +68,6 @@ export default function Dashboard({ user, onLogout }) {
         }
       };
 
-
-      setSessions([response.data, ...sessions]);
-      setNewSession({ 
-        subject: '', 
-        duration: '', 
-        date: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().split('T')[0], 
-        notes: '' 
-      });
-      setShowModal(false);
-    } catch (error) {
-      console.error('Erro ao adicionar sessão:', error);
-      alert('Erro ao adicionar sessão. Tente novamente.');
-    }
-  };
-
   const deleteSession = async (id) => {
     try {
       await axios.delete(`${API_URL}?id=${id}`, {
