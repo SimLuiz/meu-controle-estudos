@@ -47,19 +47,26 @@ export default function Dashboard({ user, onLogout }) {
         if (!newSession.subject || !newSession.duration) return;
 
         try {
-          const adjustedDate = newSession.date; // sem mexer na data
+          const response = await axios.post(API_URL, {
+            ...newSession,
+            duration: parseFloat(newSession.duration)
+          }, {
+            headers: getAuthHeader()
+          });
 
-          const response = await axios.post(
-            API_URL,
-            {
-              ...newSession,
-              duration: parseFloat(newSession.duration),
-              date: adjustedDate
-            },
-            {
-              headers: getAuthHeader()
-            }
-          );
+          setSessions([response.data, ...sessions]);
+          setNewSession({ 
+            subject: '', 
+            duration: '', 
+            date: new Date().toISOString().split('T')[0], 
+            notes: '' 
+          });
+          setShowModal(false);
+        } catch (error) {
+          console.error('Erro ao adicionar sessão:', error);
+          alert('Erro ao adicionar sessão. Tente novamente.');
+        }
+      };
 
 
       setSessions([response.data, ...sessions]);
