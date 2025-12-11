@@ -385,14 +385,15 @@ export default function Dashboard({ user, onLogout }) {
                             </div>
                             <p className="text-gray-400 text-sm flex items-center gap-2">
                               <Calendar size={14} />
-                            {(() => {
-                              const date = new Date(session.date + 'T12:00:00');
-                              return date.toLocaleDateString('pt-BR', { 
-                                weekday: 'long',
-                                day: 'numeric',
-                                month: 'long'
-                              });
-                            })()}
+                              {(() => {
+                                const dateOnly = session.date.split('T')[0];
+                                const date = new Date(dateOnly + 'T12:00:00');
+                                return date.toLocaleDateString('pt-BR', { 
+                                  weekday: 'long',
+                                  day: 'numeric',
+                                  month: 'long'
+                                });
+                              })()}
                             </p>
                             {session.notes && (
                               <p className="text-gray-300 text-sm mt-2 bg-white/5 rounded-lg p-2 italic">{session.notes}</p>
