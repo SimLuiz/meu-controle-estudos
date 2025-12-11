@@ -51,11 +51,8 @@ export default async function handler(req, res) {
 
     // GET - Listar sessões do usuário
     if (req.method === 'GET') {
-      const { rows } = await sql`
-      SELECT id, user_id, subject, duration, 
-            TO_CHAR(date AT TIME ZONE 'America/Sao_Paulo', 'YYYY-MM-DD') as date,
-            notes, created_at
-      FROM study_sessions 
+    const { rows } = await sql`
+      SELECT * FROM study_sessions 
       WHERE user_id = ${userId}
       ORDER BY date DESC, created_at DESC
     `;
@@ -68,12 +65,8 @@ export default async function handler(req, res) {
 
       const { rows } = await sql`
         INSERT INTO study_sessions (user_id, subject, duration, date, notes)
-        VALUES (${userId}, ${subject}, ${duration}, 
-                (${date} || ' 12:00:00')::timestamp AT TIME ZONE 'America/Sao_Paulo', 
-                ${notes || ''})
-        RETURNING id, user_id, subject, duration,
-                TO_CHAR(date AT TIME ZONE 'America/Sao_Paulo', 'YYYY-MM-DD') as date,
-                notes, created_at
+        VALUES (${userId}, ${subject}, ${duration}, ${date}, ${notes || ''})
+        RETURNING *
       `;
 
       return res.status(201).json(rows[0]);

@@ -43,30 +43,36 @@ export default function Dashboard({ user, onLogout }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-      const addSession = async () => {
-        if (!newSession.subject || !newSession.duration) return;
+    const addSession = async () => {
+      if (!newSession.subject || !newSession.duration) return;
 
-        try {
-          const response = await axios.post(API_URL, {
-            ...newSession,
-            duration: parseFloat(newSession.duration)
-          }, {
-            headers: getAuthHeader()
-          });
+      try {
+        // Criar data no fuso local sem conversão UTC
+        const [year, month, day] = newSession.date.split('-');
+        const localDate = `${year}-${month}-${day}`;
 
-          setSessions([response.data, ...sessions]);
-          setNewSession({ 
-            subject: '', 
-            duration: '', 
-            date: new Date().toISOString().split('T')[0], 
-            notes: '' 
-          });
-          setShowModal(false);
-        } catch (error) {
-          console.error('Erro ao adicionar sessão:', error);
-          alert('Erro ao adicionar sessão. Tente novamente.');
-        }
-      };
+        const response = await axios.post(API_URL, {
+          subject: newSession.subject,
+          duration: parseFloat(newSession.duration),
+          date: localDate,
+          notes: newSession.notes
+        }, {
+          headers: getAuthHeader()
+        });
+
+        setSessions([response.data, ...sessions]);
+        setNewSession({ 
+          subject: '', 
+          duration: '', 
+          date: new Date().toISOString().split('T')[0], 
+          notes: '' 
+        });
+        setShowModal(false);
+      } catch (error) {
+        console.error('Erro ao adicionar sessão:', error);
+        alert('Erro ao adicionar sessão. Tente novamente.');
+      }
+    };
 
   const deleteSession = async (id) => {
     try {
