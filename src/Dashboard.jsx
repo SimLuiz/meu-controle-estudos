@@ -411,7 +411,7 @@ export default function Dashboard({ user, onLogout }) {
                     .slice(0, 10)
                     .map(session => (
                       <div key={session.id} className="group bg-white/5 border border-white/10 hover:border-purple-500/50 rounded-xl p-4 hover:bg-white/10 transition-all">
-                        <div className="flex justify-between items-start">
+                        <div className="w-1/2 flex justify-between items-start">
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-2">
                               <h3 className="font-bold text-lg text-white group-hover:text-purple-300 transition-colors">{session.subject}</h3>
