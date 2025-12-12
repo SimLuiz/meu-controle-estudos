@@ -454,8 +454,8 @@ export default function Dashboard({ user, onLogout }) {
           {/* Right Column - Quick Stats */}
           <div className="space-y-6">
             
-          <PomodoroTimer />
-
+          {/* Pomodoro Timer */}
+          <PomodoroTimer onSessionComplete={loadSessions} />
 
             {/* Quick Actions */}
             <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-xl rounded-2xl p-6 border border-purple-500/20">

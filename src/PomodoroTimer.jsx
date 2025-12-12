@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, RotateCcw, Settings, X, Clock, Coffee, Zap } from 'lucide-react';
+import { Play, Pause, RotateCcw, Settings, X, Clock, Coffee, Zap, BookOpen } from 'lucide-react';
+import axios from 'axios';
 
-export default function PomodoroTimer() {
+export default function PomodoroTimer({ onSessionComplete }) {
   const [workMinutes, setWorkMinutes] = useState(25);
   const [breakMinutes, setBreakMinutes] = useState(5);
   const [timeLeft, setTimeLeft] = useState(25 * 60);
@@ -9,52 +10,99 @@ export default function PomodoroTimer() {
   const [isBreak, setIsBreak] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [cycles, setCycles] = useState(0);
+  const [subject, setSubject] = useState('');
+  const [autoSave, setAutoSave] = useState(true);
   
-  const audioRef = useRef(null);
-  const hasPlayedSound = useRef(false);
+const audioRef = useRef(null);
+const hasPlayedSound = useRef(false);
+const startTimeRef = useRef(null);
 
-  useEffect(() => {
-    if (timeLeft === 0 && !hasPlayedSound.current) {
-      hasPlayedSound.current = true;
-      
-      // Tocar som
-      if (audioRef.current) {
-        audioRef.current.play().catch(e => console.log('Audio error:', e));
-      }
+// Mover saveSession para ANTES do useEffect
+const saveSession = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const duration = workMinutes / 60; // Converter para horas
+    
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
-      // Parar o timer
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsRunning(false);
+    await axios.post('/api/sessions', {
+      subject: subject.trim(),
+      duration: duration,
+      date: today,
+      notes: `🍅 Sessão Pomodoro (${workMinutes} min)`
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
 
-      // Agendar a troca de modo para o próximo render
-      setTimeout(() => {
-        if (isBreak) {
-          setIsBreak(false);
-          setTimeLeft(workMinutes * 60);
-          setCycles(prev => prev + 1);
-        } else {
-          setIsBreak(true);
-          setTimeLeft(breakMinutes * 60);
-        }
-        hasPlayedSound.current = false;
-      }, 0);
+    // Notificar o dashboard para recarregar
+    if (onSessionComplete) {
+      onSessionComplete();
     }
-  }, [timeLeft, isBreak, workMinutes, breakMinutes]);
+
+    console.log('Sessão salva automaticamente!');
+  } catch (error) {
+    console.error('Erro ao salvar sessão do Pomodoro:', error);
+  }
+};
+
+// AGORA vem o useEffect
+useEffect(() => {
+  if (timeLeft === 0 && !hasPlayedSound.current) {
+    hasPlayedSound.current = true;
+    
+    // Tocar som
+    if (audioRef.current) {
+      audioRef.current.play().catch(e => console.log('Audio error:', e));
+    }
+
+    // Se terminou um ciclo de trabalho (não descanso) e tem matéria definida
+    if (!isBreak && autoSave && subject.trim()) {
+      saveSession();
+    }
+
+    // Parar o timer
+    setIsRunning(false);
+
+    // Agendar a troca de modo para o próximo render
+    setTimeout(() => {
+      if (isBreak) {
+        setIsBreak(false);
+        setTimeLeft(workMinutes * 60);
+        setCycles(prev => prev + 1);
+      } else {
+        setIsBreak(true);
+        setTimeLeft(breakMinutes * 60);
+      }
+      hasPlayedSound.current = false;
+    }, 0);
+  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [timeLeft, isBreak, workMinutes, breakMinutes, autoSave, subject]);
 
   // Efeito do contador
   useEffect(() => {
     let interval = null;
 
     if (isRunning && timeLeft > 0) {
+      // Guardar quando começou
+      if (!startTimeRef.current) {
+        startTimeRef.current = Date.now();
+      }
+
       interval = setInterval(() => {
         setTimeLeft(prevTime => prevTime - 1);
       }, 1000);
+    } else if (!isRunning) {
+      startTimeRef.current = null;
     }
 
     return () => {
       if (interval) clearInterval(interval);
     };
   }, [isRunning, timeLeft]);
+
+
 
   const toggleTimer = () => {
     setIsRunning(prev => !prev);
@@ -65,6 +113,7 @@ export default function PomodoroTimer() {
     setIsBreak(false);
     setTimeLeft(workMinutes * 60);
     hasPlayedSound.current = false;
+    startTimeRef.current = null;
   };
 
   const applySettings = (newWork, newBreak) => {
@@ -89,7 +138,6 @@ export default function PomodoroTimer() {
 
   return (
     <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
-      {/* Hidden audio element */}
       <audio ref={audioRef} src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZUQ0PVqzn77BdGAg+ltryxnYpBSp+zPLaizsIGGS57OihURELTKXh8bllHAU2jdXzzn0vBSJ1xe/glEILElyx6OyrWBgJPJnc8sFuJAUuhM/y1YU2Bhxqvu7mnFINDlOq5O+zYBoGPZTY88p5KwUme8rx3I4+CRZitOrpo1QSC0mi4PG8aCAFMYnU886BMAYfcsLu45hPDAk7ldrxx3MoBSh9zPPajj0JF2G3ȵhVDgxIouD0wGsbBjKO1fPQgi4GIXHCȴZLDAk5ldny03oxBit8yPHKfDQHHGq76d2VUQwMTqjh9rtoHAU0jNLzzn0uBSNyw+ΦmE0LDkWl4PK/aiEGLobP8tZ+LwUkcsfx34xACxFcsOrpo1QTDEii4POܞSDF0ep5uugUgwLR5/k9fFuIgUqfMrѕg0+ChhfsuXtpVgXDTyU2fO+byIFLoDM8diGOQgWYrjqrFsZ" />
 
       <div className="flex items-center justify-between mb-6">
@@ -111,9 +159,38 @@ export default function PomodoroTimer() {
         </button>
       </div>
 
+      {/* Campo de Matéria */}
+      {!isBreak && (
+        <div className="mb-4">
+          <label className="text-white font-semibold mb-2 text-sm flex items-center gap-2">
+            <BookOpen size={16} />
+            Matéria de estudo
+          </label>
+          <input
+            type="text"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            disabled={isRunning}
+            className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 disabled:opacity-50"
+            placeholder="Ex: Matemática"
+          />
+          <div className="flex items-center gap-2 mt-2">
+            <input
+              type="checkbox"
+              id="autoSave"
+              checked={autoSave}
+              onChange={(e) => setAutoSave(e.target.checked)}
+              className="w-4 h-4"
+            />
+            <label htmlFor="autoSave" className="text-gray-400 text-xs">
+              Salvar automaticamente como sessão
+            </label>
+          </div>
+        </div>
+      )}
+
       {/* Circular Progress */}
       <div className="relative w-64 h-64 mx-auto mb-6">
-        {/* Background circle */}
         <svg className="transform -rotate-90 w-64 h-64">
           <circle
             cx="128"
@@ -124,7 +201,6 @@ export default function PomodoroTimer() {
             fill="none"
             className="text-white/10"
           />
-          {/* Progress circle */}
           <circle
             cx="128"
             cy="128"
@@ -141,7 +217,6 @@ export default function PomodoroTimer() {
           />
         </svg>
 
-        {/* Timer display */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <div className={`text-6xl font-black ${isBreak ? 'text-green-400' : 'text-white'}`}>
             {formatTime(timeLeft)}
@@ -163,11 +238,12 @@ export default function PomodoroTimer() {
 
         <button
           onClick={toggleTimer}
+          disabled={!isBreak && !subject.trim() && autoSave}
           className={`${
             isBreak
               ? 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
               : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
-          } text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg hover:scale-105 flex items-center gap-2`}
+          } text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg hover:scale-105 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed`}
         >
           {isRunning ? (
             <>
@@ -198,7 +274,9 @@ export default function PomodoroTimer() {
       {/* Motivational message */}
       <div className="mt-6 text-center">
         <p className="text-gray-400 text-sm">
-          {isRunning ? (
+          {!subject.trim() && !isBreak && autoSave ? (
+            '📝 Defina a matéria para começar'
+          ) : isRunning ? (
             isBreak ? '☕ Relaxe e recarregue as energias!' : '🎯 Mantenha o foco!'
           ) : (
             '▶️ Clique em Iniciar para começar'
