@@ -130,7 +130,46 @@ export default function Dashboard({ user, onLogout }) {
     return { totalHours, bySubject: sortedSubjects, sessionCount: filtered.length };
   };
 
+    const calculateStreak = () => {
+    if (sessions.length === 0) return 0;
+
+    // Ordenar sessões por data (mais recente primeiro)
+    const sortedSessions = [...sessions].sort((a, b) => {
+      const dateA = new Date(a.date.split('T')[0]);
+      const dateB = new Date(b.date.split('T')[0]);
+      return dateB - dateA;
+    });
+
+    // Pegar apenas datas únicas
+    const uniqueDates = [...new Set(sortedSessions.map(s => s.date.split('T')[0]))];
+
+    // Data de hoje no fuso local
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+    let streak = 0;
+    let currentDate = new Date(today);
+
+    // Começar a contar do dia mais recente
+    for (let i = 0; i < uniqueDates.length; i++) {
+      const sessionDate = uniqueDates[i];
+      const checkDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+
+      if (sessionDate === checkDate) {
+        streak++;
+        // Voltar um dia
+        currentDate.setDate(currentDate.getDate() - 1);
+      } else {
+        // Se pulou um dia, quebrou a sequência
+        break;
+      }
+    }
+
+    return streak;
+  };
+
   const stats = calculateStats();
+  const streak = calculateStreak();
   const filteredSessions = getFilteredSessions();
 
   const getProgressColor = (hours) => {
@@ -159,13 +198,7 @@ export default function Dashboard({ user, onLogout }) {
     return 'Boa noite';
   };
 
-  const getStreak = () => {
-    const today = new Date().toISOString().split('T')[0];
-    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-    const hasToday = sessions.some(s => s.date === today);
-    const hasYesterday = sessions.some(s => s.date === yesterday);
-    return hasToday && hasYesterday ? '🔥 2+ dias' : hasToday ? '⚡ Hoje' : '💤 Inativo';
-  };
+
 
   if (loading) {
     return (
@@ -208,11 +241,7 @@ export default function Dashboard({ user, onLogout }) {
                     {getMotivationalMessage()}, {user.name.split(' ')[0]}! 👋
                   </h1>
                   <div className="flex items-center gap-3 mt-1">
-                    <span className="text-purple-300 font-semibold flex items-center gap-1">
-                      <Star size={16} className="text-yellow-400" />
-                      {getStreak()}
-                    </span>
-                    <span className="text-gray-400">•</span>
+
                     <span className="text-gray-400">{sessions.length} sessões registradas</span>
                   </div>
                 </div>
@@ -297,20 +326,23 @@ export default function Dashboard({ user, onLogout }) {
             </p>
           </div>
 
-          <div className="group bg-gradient-to-br from-yellow-500/10 to-orange-500/10 backdrop-blur-xl rounded-2xl p-6 border border-yellow-500/20 hover:border-yellow-500/50 transition-all hover:scale-105 hover:shadow-2xl hover:shadow-yellow-500/20">
+          <div className="group bg-gradient-to-br from-orange-500/10 to-red-500/10 backdrop-blur-xl rounded-2xl p-6 border border-orange-500/20 hover:border-orange-500/50 transition-all hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/20">
             <div className="flex items-center justify-between mb-4">
-              <div className="bg-gradient-to-br from-yellow-500 to-orange-500 p-3 rounded-xl group-hover:scale-110 transition-transform">
-                <Award className="text-white" size={24} />
+              <div className="bg-gradient-to-br from-orange-500 to-red-500 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                <Flame className="text-white" size={24} />
               </div>
-              <div className="text-3xl">🏆</div>
+              <div className="text-3xl">🔥</div>
             </div>
-            <p className="text-gray-400 text-sm font-semibold mb-1">Meta Diária</p>
+            <p className="text-gray-400 text-sm font-semibold mb-1">Ofensiva</p>
             <div className="flex items-center gap-2">
-              <p className="text-4xl font-black text-white">{stats.totalHours >= 4 ? '100' : Math.round((stats.totalHours / 4) * 100)}%</p>
-              {stats.totalHours >= 4 && <Flame className="text-orange-400 animate-bounce" size={24} />}
+              <p className="text-4xl font-black text-white">{streak}</p>
+              <span className="text-orange-400 font-bold text-lg">
+                {streak === 0 ? '' : streak === 1 ? 'dia' : 'dias'}
+              </span>
             </div>
+            {streak >= 7 && <p className="text-orange-300 text-xs mt-2 font-bold">🏆 Uma semana!</p>}
+            {streak >= 30 && <p className="text-orange-300 text-xs mt-2 font-bold">👑 Um mês incrível!</p>}
           </div>
-        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
@@ -469,6 +501,13 @@ export default function Dashboard({ user, onLogout }) {
                   <span className="text-gray-400">Horas Totais</span>
                   <span className="text-white font-bold">{sessions.reduce((sum, s) => sum + parseFloat(s.duration), 0).toFixed(1)}h</span>
                 </div>
+                <div className="flex justify-between items-center">
+                <span className="text-gray-400">Ofensiva Atual</span>
+                <span className="text-white font-bold flex items-center gap-1">
+                  {streak > 0 && <Flame className="text-orange-400" size={16} />}
+                  {streak} {streak === 1 ? 'dia' : 'dias'}
+                </span>
+              </div>
               </div>
             </div>
           </div>
@@ -567,6 +606,7 @@ export default function Dashboard({ user, onLogout }) {
           animation-delay: 4s;
         }
       `}</style>
+    </div>
     </div>
   );
 }
