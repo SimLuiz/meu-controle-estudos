@@ -344,7 +344,9 @@ export default function Dashboard({ user, onLogout }) {
             {streak >= 30 && <p className="text-orange-300 text-xs mt-2 font-bold">👑 Um mês incrível!</p>}
           </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/*<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">*/}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto px-4">
+
           
           {/* Left Column - Subject Breakdown */}
           <div className="lg:col-span-2 space-y-6">
