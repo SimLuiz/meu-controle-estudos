@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, TrendingUp, BookOpen, BarChart3, Plus, X, LogOut, Award, Target, Zap, Star, ChevronRight, Flame } from 'lucide-react';
 import axios from 'axios';
+import PomodoroTimer from './PomodoroTimer';
 
 const API_URL = '/api/sessions';
 
@@ -453,6 +454,9 @@ export default function Dashboard({ user, onLogout }) {
           {/* Right Column - Quick Stats */}
           <div className="space-y-6">
             
+          <PomodoroTimer />
+
+
             {/* Quick Actions */}
             <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-xl rounded-2xl p-6 border border-purple-500/20">
               <h3 className="text-xl font-black text-white mb-4">Ações Rápidas</h3>
