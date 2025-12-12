@@ -343,10 +343,9 @@ export default function Dashboard({ user, onLogout }) {
             {streak >= 7 && <p className="text-orange-300 text-xs mt-2 font-bold">🏆 Uma semana!</p>}
             {streak >= 30 && <p className="text-orange-300 text-xs mt-2 font-bold">👑 Um mês incrível!</p>}
           </div>
+        </div>
 
-          {/*<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">*/}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto px-4">
-
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Left Column - Subject Breakdown */}
           <div className="lg:col-span-2 space-y-6">
@@ -608,7 +607,6 @@ export default function Dashboard({ user, onLogout }) {
           animation-delay: 4s;
         }
       `}</style>
-    </div>
     </div>
   );
 }
