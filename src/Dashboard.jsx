@@ -299,7 +299,7 @@ export default function Dashboard({ user, onLogout }) {
             <p className="text-4xl font-black text-white">{stats.totalHours.toFixed(1)}h</p>
           </div>
 
-          {/* <div className="group bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-xl rounded-2xl p-6 border border-green-500/20 hover:border-green-500/50 transition-all hover:scale-105 hover:shadow-2xl hover:shadow-green-500/20">
+           <div className="group bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-xl rounded-2xl p-6 border border-green-500/20 hover:border-green-500/50 transition-all hover:scale-105 hover:shadow-2xl hover:shadow-green-500/20">
             <div className="flex items-center justify-between mb-4">
               <div className="bg-gradient-to-br from-green-500 to-emerald-500 p-3 rounded-xl group-hover:scale-110 transition-transform">
                 <BarChart3 className="text-white" size={24} />
@@ -308,7 +308,7 @@ export default function Dashboard({ user, onLogout }) {
             </div>
             <p className="text-gray-400 text-sm font-semibold mb-1">Sessões</p>
             <p className="text-4xl font-black text-white">{stats.sessionCount}</p>
-          </div> */} 
+          </div> 
           
           <div className="group bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-xl rounded-2xl p-6 border border-purple-500/20 hover:border-purple-500/50 transition-all hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20">
             <div className="flex items-center justify-between mb-4">
