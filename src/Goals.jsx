@@ -315,7 +315,7 @@ export default function Goals({ sessions }) {
               </div>
 
               {/* Presets Rápidos */}
-              <div>
+              {/*<div>
                 <label className="block text-white font-bold mb-2">Presets Rápidos</label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
@@ -343,7 +343,7 @@ export default function Goals({ sessions }) {
                     🗓️ 80h/mês
                   </button>
                 </div>
-              </div>
+              </div>*/}
             </div>
 
             <div className="flex gap-3 mt-6">
