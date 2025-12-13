@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, TrendingUp, BookOpen, BarChart3, Plus, X, LogOut, Award, Target, Zap, Star, ChevronRight, Flame } from 'lucide-react';
 import axios from 'axios';
 import PomodoroTimer from './PomodoroTimer';
+import Goals from './Goals';
 
 const API_URL = '/api/sessions';
 
@@ -350,6 +351,9 @@ export default function Dashboard({ user, onLogout }) {
           
           {/* Left Column - Subject Breakdown */}
           <div className="lg:col-span-2 space-y-6">
+
+              {/* Sistema de Metas - NOVO! */}
+            <Goals sessions={sessions} />
             
             {/* Subject Breakdown */}
             <div className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-2xl p-6 border border-white/10">
