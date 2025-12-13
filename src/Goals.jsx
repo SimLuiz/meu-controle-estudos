@@ -298,7 +298,7 @@ export default function Goals({ sessions }) {
                 />
               </div>
 
-              <div>
+              {/*<div>
                 <label className="block text-white font-bold mb-2">
                   Matéria (opcional)
                 </label>
@@ -312,7 +312,7 @@ export default function Goals({ sessions }) {
                 <p className="text-gray-400 text-xs mt-1">
                   Se deixar vazio, a meta será para todas as matérias
                 </p>
-              </div>
+              </div>*/}
 
               {/* Presets Rápidos */}
               {/*<div>
