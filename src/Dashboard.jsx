@@ -352,8 +352,7 @@ export default function Dashboard({ user, onLogout }) {
           {/* Left Column - Subject Breakdown */}
           <div className="lg:col-span-2 space-y-6">
 
-            {/* Sistema de Metas - NOVO! */}
-            <div><Goals sessions={sessions} /></div>
+
             
             {/* Subject Breakdown */}
             <div className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-2xl p-6 border border-white/10">
@@ -453,6 +452,9 @@ export default function Dashboard({ user, onLogout }) {
                 )}
               </div>
             </div>
+            
+                        {/* Sistema de Metas - NOVO! */}
+            <Goals sessions={sessions} />
           </div>
 
           {/* Right Column - Quick Stats */}
